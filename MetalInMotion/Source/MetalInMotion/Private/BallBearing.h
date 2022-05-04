@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Components/StaticMeshComponent.h"
 #include "BallBearing.generated.h"
 
 UCLASS()
@@ -20,16 +21,4 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BallBearing)
 	float Magnetized = 1.0f;
-	
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };

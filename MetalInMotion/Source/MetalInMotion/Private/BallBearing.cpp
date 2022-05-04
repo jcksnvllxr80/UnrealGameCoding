@@ -13,25 +13,3 @@ ABallBearing::ABallBearing()
 	BallMesh->SetSimulatePhysics(true);
 	SetRootComponent(BallMesh);
 }
-
-// Called when the game starts or when spawned
-void ABallBearing::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ABallBearing::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void ABallBearing::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
