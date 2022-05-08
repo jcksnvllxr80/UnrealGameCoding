@@ -61,8 +61,8 @@ static void InitializeDefaultPawnInputBindings()
 		UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("BallBearing_MoveLaterally", EKeys::Right, 1.f));
 		UPlayerInput::AddEngineDefinedAxisMapping(FInputAxisKeyMapping("BallBearing_MoveLaterally", EKeys::Gamepad_LeftX, 1.f));
 
-		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("BallBearing_Jump", EKeys::Enter));
-		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("BallBearing_Dash", EKeys::SpaceBar));
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("BallBearing_Jump", EKeys::SpaceBar));
+		UPlayerInput::AddEngineDefinedActionMapping(FInputActionKeyMapping("BallBearing_Dash", EKeys::Enter));
 	}
 }
 
@@ -92,7 +92,14 @@ Have the ball bearing perform a jump.
 *********************************************************************************/
 
 void APlayerBallBearing::Jump()
-{
+{	// Only jump if we're in contact with something, normally the ground.
+
+	if (InContact == true)
+	{
+		// Add the impulse to the ball to perform the jump.
+		BallMesh->AddImpulse(FVector(0.0f, 0.0f, JumpForce * 1000.0f));
+	}
+
 }
 
 
@@ -112,6 +119,8 @@ Control the movement of the ball bearing, called every frame.
 void APlayerBallBearing::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
-
-	BallMesh->AddForce(FVector(InputLongitude, InputLatitude, 0.0f) * ControllerForce * BallMesh->GetMass());
+	if (true) //(InContact == true)
+	{
+		BallMesh->AddForce(FVector(InputLongitude, InputLatitude, 0.0f) * ControllerForce * BallMesh->GetMass());
+	}
 }
