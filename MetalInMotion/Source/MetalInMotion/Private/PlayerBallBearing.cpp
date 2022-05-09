@@ -118,9 +118,9 @@ Control the movement of the ball bearing, called every frame.
 
 void APlayerBallBearing::Tick(float deltaSeconds)
 {
-	Super::Tick(deltaSeconds);
-	if (true) //(InContact == true)
+	if (InContact == true)
 	{
 		BallMesh->AddForce(FVector(InputLongitude, InputLatitude, 0.0f) * ControllerForce * BallMesh->GetMass());
 	}
+	Super::Tick(deltaSeconds);
 }
