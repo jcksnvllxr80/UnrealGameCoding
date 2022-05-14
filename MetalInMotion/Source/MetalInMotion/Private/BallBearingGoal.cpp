@@ -13,6 +13,25 @@ These are generally used as the parent actor for goals within the game.
 #include "Components/SphereComponent.h"
 #include "Components/BillboardComponent.h"
 
+/**
+Get a ratio of a value between a minimum and maximum amount, optionally clamped.
+*********************************************************************************/
+
+static float GetRatio(float value, float minimum, float maximum, bool clamp = true)
+{
+	if (value > maximum && clamp == true)
+	{
+		return 1.0f;
+	}
+	else if (value > minimum)
+	{
+		return (value - minimum) / (maximum - minimum);
+	}
+	else
+	{
+		return 0.0f;
+	}
+}
 
 /**
 Constructor for a goal for ball bearings.
@@ -20,6 +39,8 @@ Constructor for a goal for ball bearings.
 
 ABallBearingGoal::ABallBearingGoal()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	
 	SetActorHiddenInGame(false);
 }
 
@@ -37,6 +58,32 @@ void ABallBearingGoal::PostInitializeComponents()
 #if WITH_EDITORONLY_DATA
 	GetSpriteComponent()->SetHiddenInGame(true);
 #endif
+}
+
+void ABallBearingGoal::Tick(float deltaSeconds)
+{
+	Super::Tick(deltaSeconds);
+
+	FVector ourLocation = GetActorLocation();
+	float sphereRadius = Cast<USphereComponent>(GetCollisionComponent())->GetScaledSphereRadius();
+	float magnetism = Magnetism;
+
+	// Now iterate around the proximate ball bearings and draw them towards our center
+	// using physics forces scaled by magnetism and distance from the center.
+
+	for (ABallBearing* ballBearing : BallBearings)
+	{
+		FVector difference = ourLocation - ballBearing->GetActorLocation();
+		float distance = difference.Size();
+		FVector direction = difference;
+
+		direction.Normalize();
+
+		float ratio = GetRatio(distance, 0.0f, sphereRadius);
+		FVector force = (1.0f - ratio) * magnetism * direction;
+
+		ballBearing->BallMesh->AddForce(force);
+	}
 }
 
 
