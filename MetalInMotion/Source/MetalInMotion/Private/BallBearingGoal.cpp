@@ -49,6 +49,24 @@ ABallBearingGoal::ABallBearingGoal()
 Hide the collision and sprite components in-game.
 *********************************************************************************/
 
+bool ABallBearingGoal::HasBallBearing() const
+{
+	FVector ourLocation = GetActorLocation();
+
+	for (const ABallBearing* ballBearing : BallBearings)
+	{
+		FVector difference = ourLocation - ballBearing->GetActorLocation();
+		float distance = difference.Size();
+
+		if (distance < 75.0f)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void ABallBearingGoal::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -68,6 +86,15 @@ void ABallBearingGoal::Tick(float deltaSeconds)
 	float sphereRadius = Cast<USphereComponent>(GetCollisionComponent())->GetScaledSphereRadius();
 	float magnetism = Magnetism;
 
+	// If we're cheating then give our goals extra magnetism.
+	static const IConsoleVariable* extraForce = IConsoleManager::Get().FindConsoleVariable(TEXT("OurGame.ExtraMagnetism"));
+
+	if (extraForce != nullptr &&
+		extraForce->GetInt() != 0)
+	{
+		magnetism *= 4.0f;
+	}
+	
 	// Now iterate around the proximate ball bearings and draw them towards our center
 	// using physics forces scaled by magnetism and distance from the center.
 
