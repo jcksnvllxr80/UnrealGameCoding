@@ -49,24 +49,6 @@ ABallBearingGoal::ABallBearingGoal()
 Hide the collision and sprite components in-game.
 *********************************************************************************/
 
-bool ABallBearingGoal::HasBallBearing() const
-{
-	FVector ourLocation = GetActorLocation();
-
-	for (const ABallBearing* ballBearing : BallBearings)
-	{
-		FVector difference = ourLocation - ballBearing->GetActorLocation();
-		float distance = difference.Size();
-
-		if (distance < 75.0f)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
 void ABallBearingGoal::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -77,6 +59,10 @@ void ABallBearingGoal::PostInitializeComponents()
 	GetSpriteComponent()->SetHiddenInGame(true);
 #endif
 }
+
+/**
+Add magnetism to the proximate ball bearings, drawing them towards our center.
+*********************************************************************************/
 
 void ABallBearingGoal::Tick(float deltaSeconds)
 {
@@ -147,4 +133,26 @@ void ABallBearingGoal::NotifyActorEndOverlap(AActor* otherActor)
 	{
 		BallBearings.Remove(ballBearing);
 	}
+}
+
+/**
+Does this goal have a ball bearing resting in its center?
+*********************************************************************************/
+
+bool ABallBearingGoal::HasBallBearing() const
+{
+	FVector ourLocation = GetActorLocation();
+
+	for (const ABallBearing* ballBearing : BallBearings)
+	{
+		FVector difference = ourLocation - ballBearing->GetActorLocation();
+		float distance = difference.Size();
+
+		if (distance < 75.0f)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
